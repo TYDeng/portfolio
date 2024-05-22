@@ -1,0 +1,48 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.resume {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+header p {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 20px;
+}
+
+section h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+
+footer {
+    margin-top: 50px;
+    border-top: 1px solid #ccc;
+    padding-top: 20px;
+}
+
+footer p {
+    font-size: 16px;
+    margin: 5px 0;
+}
