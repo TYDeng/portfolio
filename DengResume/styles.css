@@ -26,11 +26,6 @@ section h2 {
     margin-bottom: 10px;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
 li h3 {
     font-size: 20px;
     margin-bottom: 5px;
@@ -45,4 +40,16 @@ footer {
 footer p {
     font-size: 16px;
     margin: 5px 0;
+}
+
+.avatar {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    width: auto;
+    height: auto;
+    border: 2px solid #000;
+    padding: 10px;
+    max-width: 150px; 
+    max-height: 150px; 
 }
