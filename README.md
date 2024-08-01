@@ -12,5 +12,5 @@ This repo contains personal resumes in public folder and projects with link in p
 (Read its READM.md for details)
 
 ### Assignment 4
-[Web application] (https://github.com/CZ2508444186/emergency_waitlist.git)
+[Emergency_waitlist](https://github.com/CZ2508444186/emergency_waitlist.git)
 (Read its READM.md for details)
