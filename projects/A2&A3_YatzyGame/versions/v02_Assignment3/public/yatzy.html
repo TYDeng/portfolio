@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yatzy Game</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; }
+        #gameContainer { width: 90%; max-width: 800px; margin: 20px auto; padding: 20px; background: rgb(247, 236, 236); border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        #gameStatus { font-size: 25px; margin-bottom: 20px; }
+        #diceContainer { text-align: center; padding: 20px; }
+        .dice { width: 100px; height: 100px; display: inline-block; background-size: cover; margin: 5px; }
+        .dice-wrapper { display: inline-block; margin: 5px; text-align: center; }
+        .keep-checkbox { margin-top: 5px; }
+        #scoreTable { width: 100%; border-collapse: collapse; }
+        #scoreTable th, #scoreTable td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; width: 33.3%; }
+        #scoreTable th { background-color: #f8f8f8; }
+        .score-option, .potential-score { background-color: #90ee90; cursor: pointer; text-align: center; }
+        .score-option { background-color: #d3d3d3; }
+        .potential-score { background-color: #c8e6c9; color: green; } /* Light green background */
+        button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+        .header { text-align: center; color: black; font-size: 40px; margin-bottom: 20px; background-color: aqua; border: solid; font-family: 'Times New Roman', Times, serif;}
+        #controls { text-align: center; }
+
+        #scoreTable th:nth-child(1), #scoreTable td:nth-child(1) {
+            width: 25%; /* 第一列可能需要更少的宽度，因为只包含文本 */
+        }
+
+        #leaderboardContainer {
+            width: 50%;
+            margin: 0 auto;
+            padding: 20px;
+            background: rgb(232, 226, 226);
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        #leaderboardTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #leaderboardTable th, #leaderboardTable td {
+            text-align: center;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        #leaderboardTable th {
+            background-color: #f0f0f0; /* 标题背景色 */
+        }
+
+        #scoreTable button {
+            padding: 5px 10px;
+            background-color: #4CAF50; /* 绿色 */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #scoreTable button:hover {
+            background-color: #45a049; /* 深绿色 */
+        }
+
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        let turn = 1;
+        //let turn1=0;
+
+
+
+        function rollDiceAndManageGame() {
+            if (turn > 15) {
+                alert(`Game Over, Your Total Score Is: ${document.getElementById('totalScore').textContent}`);
+                return;
+            }
+
+            const diceKeep = [];
+            document.querySelectorAll('.keep-checkbox').forEach((checkbox, index) => {
+                diceKeep[index] = checkbox.checked;
+            });
+
+            $.ajax({
+                url: 'api.php',
+                type: 'POST',
+                data: { action: 'roll', diceKeep: diceKeep },
+                success: function(response) {
+                    if (response.error) {
+                        alert(response.error);
+                    } else {
+                        if (response.logs) {
+                            response.logs.forEach(log => console.log(log));
+                        }
+                        updateUI(response);
+                    }
+                }
+            });
+
+        }
+
+        function calculateScore() {
+            // 发送请求到服务器计算得分
+            console.log("Calculating score..."); // 确认函数被调用
+            $.ajax({
+                url: 'api.php',
+                type: 'POST',
+                data: { action: 'calculateScore' }, // 确保服务器能处理这个action
+                success: function(response) {
+                    console.log("Response:", response); // 打印从服务器返回的数据
+                    if (response.error) {
+                        console.log("Error: ", response.error);
+                        alert(response.error);
+                    } else {
+                        updateUI(response); // 更新UI显示新计算的得分
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("AJAX error:", status, error); // 检查网络请求错误
+                }
+            });
+        }
+
+
+        function applyScore(category) {
+            $.ajax({
+                url: 'api.php',
+                type: 'POST',
+                data: {action: 'updateScore', category: category, turn: turn},
+                success: function (response) {
+                    if (response.logs) {
+                        response.logs.forEach(log => console.log(log));
+                    }
+                    updateUI(response);
+                }
+            });
+        }
+
+        function endGame() {
+            if (turn > 15) {
+                console.log("test ok?")
+                $.ajax({
+                    url: 'api.php',
+                    type: 'POST',
+                    data: {action: 'endGame'},
+                    success: function (response) {
+                        console.log("success?")
+                        if (response.logs) {
+                            response.logs.forEach(log => console.log(log));
+                        }
+                        alert(response.message);
+                        updateLeaderboard(response.leaderboard);
+                    }
+                });
+            }
+        }
+
+        function updateUI(game) {
+
+            $('#currentTurn').text(`Turn: ${turn} of 15`);
+
+            $('#rollsLeft').text(`Rolls Left: ${3 - game.reRoll}`);
+            game.diceVal.forEach((val, index) => {
+                $(`#dice${index + 1}`).css('background-image', `url('d${val}.jpg')`);
+                $(`#keep${index + 1}`).prop('checked', game.diceKeep[index]);
+            });
+
+
+
+            // Update score and potential score
+            $('#t1').text(game.scores['Ones']);
+            $('#tt1').text(game.potentialScores['Ones']);
+            $('#t2').text(game.scores['Twos']);
+            $('#tt2').text(game.potentialScores['Twos']);
+            $('#t3').text(game.scores['Threes']);
+            $('#tt3').text(game.potentialScores['Threes']);
+            $('#t4').text(game.scores['Fours']);
+            $('#tt4').text(game.potentialScores['Fours']);
+            $('#t5').text(game.scores['Fives']);
+            $('#tt5').text(game.potentialScores['Fives']);
+            $('#t6').text(game.scores['Sixes']);
+            $('#tt6').text(game.potentialScores['Sixes']);
+            $('#t7').text(game.scores['One Pair']);
+            $('#tt7').text(game.potentialScores['One Pair']);
+            $('#t8').text(game.scores['Two Pairs']);
+            $('#tt8').text(game.potentialScores['Two Pairs']);
+            $('#t9').text(game.scores['Three of a Kind']);
+            $('#tt9').text(game.potentialScores['Three of a Kind']);
+            $('#t10').text(game.scores['Four of a Kind']);
+            $('#tt10').text(game.potentialScores['Four of a Kind']);
+            $('#t11').text(game.scores['Full House']);
+            $('#tt11').text(game.potentialScores['Full House']);
+            $('#t12').text(game.scores['Small Straight']);
+            $('#tt12').text(game.potentialScores['Small Straight']);
+            $('#t13').text(game.scores['Large Straight']);
+            $('#tt13').text(game.potentialScores['Large Straight']);
+            $('#t14').text(game.scores['Chance']);
+            $('#tt14').text(game.potentialScores['Chance']);
+            $('#t15').text(game.scores['Yatzy']);
+            $('#tt15').text(game.potentialScores['Yatzy']);
+
+            $('#totalScore').text(game.totalScore);
+
+            if (game.reRoll==3 && turn < 16) {
+                turn++;
+            }
+        }
+
+        function updateLeaderboard(leaderboard) {
+            const leaderboardBody = $('#leaderboardTable tbody');
+            leaderboardBody.empty(); // 清空现有的排行榜内容
+
+            leaderboard.forEach((score, index) => {
+                // 动态添加行到表格中，包括排名和分数
+                leaderboardBody.append(`<tr><td>${index + 1}</td><td>${score}</td></tr>`);
+            });
+        }
+
+
+        function resetGame() {
+            turn = 1;
+            $.ajax({
+                url: 'api.php',
+                type: 'POST',
+                data: { action: 'initialize' }, // 只初始化游戏状态，不触及排行榜
+                success: function(response) {
+                    updateUI(response); // 更新UI为初始状态
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $.ajax({
+                url: 'api.php',
+                type: 'POST',
+                data: { action: 'initialize' }, // 只初始化游戏状态，不触及排行榜
+                success: function(response) {
+                    updateUI(response); // 更新UI为初始状态
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<div id="gameContainer">
+    <div class="header">Yatzy Game</div>
+    <div id="gameStatus">
+        <span id="currentTurn">Turn: 1 of 15</span> |
+        <span id="rollsLeft">Rolls Left: 3</span>
+    </div>
+    <div id="diceContainer">
+        <!-- Dice with checkboxes for keeping -->
+        <div class="dice-wrapper">
+            <div class="dice" id="dice1" style="background-image: url('d0.jpg');"></div>
+            <input type="checkbox" class="keep-checkbox" id="keep1">
+        </div>
+        <div class="dice-wrapper">
+            <div class="dice" id="dice2" style="background-image: url('d0.jpg');"></div>
+            <input type="checkbox" class="keep-checkbox" id="keep2">
+        </div>
+        <div class="dice-wrapper">
+            <div class="dice" id="dice3" style="background-image: url('d0.jpg');"></div>
+            <input type="checkbox" class="keep-checkbox" id="keep3">
+        </div>
+        <div class="dice-wrapper">
+            <div class="dice" id="dice4" style="background-image: url('d0.jpg');"></div>
+            <input type="checkbox" class="keep-checkbox" id="keep4">
+        </div>
+        <div class="dice-wrapper">
+            <div class="dice" id="dice5" style="background-image: url('d0.jpg');"></div>
+            <input type="checkbox" class="keep-checkbox" id="keep5">
+        </div>
+    </div>
+    <div id="controls">
+        <button onclick="rollDiceAndManageGame()">Roll the Dice</button>
+        <!--<button onclick="calculateScore()">Calculate Score</button> -->
+        <button onclick="resetGame()">Reset Game</button>
+    </div>
+    <table id="scoreTable">
+        <thead>
+        <tr>
+            <th>Category</th>
+            <th>Score</th>
+            <th>Potential</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Upper section -->
+        <tr class="section-header"><td colspan="3">Upper Section:</td></tr>
+        <tr><td>Ones</td><td id="t1" class="score-option">0</td><td id="tt1" class="potential-score" onclick="applyScore('Ones')">0</td></tr>
+        <tr><td>Twos</td><td id="t2" class="score-option">0</td><td id="tt2" class="potential-score" onclick="applyScore('Twos')">0</td></tr>
+        <tr><td>Threes</td><td id="t3" class="score-option">0</td><td id="tt3" class="potential-score" onclick="applyScore('Threes')">0</td></tr>
+        <tr><td>Fours</td><td id="t4" class="score-option">0</td><td id="tt4" class="potential-score" onclick="applyScore('Fours')">0</td></tr>
+        <tr><td>Fives</td><td id="t5" class="score-option">0</td><td id="tt5" class="potential-score" onclick="applyScore('Fives')">0</td></tr>
+        <tr><td>Sixes</td><td id="t6" class="score-option">0</td><td id="tt6" class="potential-score" onclick="applyScore('Sixes')">0</td></tr>
+        <!-- Lower section -->
+        <tr class="section-header"><td colspan="3">Lower Section:</td></tr>
+        <tr><td>One Pair</td><td id="t7" class="score-option">0</td><td id="tt7" class="potential-score" onclick="applyScore('One Pair')">0</td></tr>
+        <tr><td>Two Pairs</td><td id="t8" class="score-option">0</td><td id="tt8" class="potential-score" onclick="applyScore('Two Pairs')">0</td></tr>
+        <tr><td>Three of a Kind</td><td id="t9" class="score-option">0</td><td id="tt9" class="potential-score" onclick="applyScore('Three of a Kind')">0</td></tr>
+        <tr><td>Four of a Kind</td><td id="t10" class="score-option">0</td><td id="tt10" class="potential-score" onclick="applyScore('Four of a Kind')">0</td></tr>
+        <tr><td>Full House</td><td id="t11" class="score-option">0</td><td id="tt11" class="potential-score" onclick="applyScore('Full House')">0</td></tr>
+        <tr><td>Small Straight</td><td id="t12" class="score-option">0</td><td id="tt12" class="potential-score" onclick="applyScore('Small Straight')">0</td></tr>
+        <tr><td>Large Straight</td><td id="t13" class="score-option">0</td><td id="tt13" class="potential-score" onclick="applyScore('Large Straight')">0</td></tr>
+        <tr><td>Chance</td><td id="t14" class="score-option">0</td><td id="tt14" class="potential-score" onclick="applyScore('Chance')">0</td></tr>
+        <tr><td>Yatzy</td><td id="t15" class="score-option">0</td><td id="tt15" class="potential-score" onclick="applyScore('Yatzy')">0</td></tr>
+        <!-- Total Score -->
+        <tr>
+            <td>Total</td>
+            <td id="totalScore">0</td>
+           <td><button onclick="endGame()">Submit Score</button></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="leaderboardContainer">
+        <h3>Top 10 Scores</h3>
+        <table id="leaderboardTable">
+            <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Score</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 排行榜的得分将在这里动态填充 -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <footer style="background-color: pink; padding: 20px; color: black;">
+        <p>&copy; 2024 Yatzy Game. All rights reserved.</p>
+        <nav>
+            <ul>
+                <li><p>Wenbo Yu 300161788</p></li>
+            </ul>
+        </nav>
+    </footer>
+</div>
+
+</body>
+</html>
+
+
+
+
