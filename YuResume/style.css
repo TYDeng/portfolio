@@ -2,7 +2,7 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url('chinese-style-8197546.jpg'); 
+    background-image: url('chinese-style-8197546.jpg'); /* 添加背景图片 */
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -13,7 +13,7 @@ body {
     max-width: 800px;
     margin: 50px auto;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9); 
+    background-color: rgba(255, 255, 255, 0.9); /* 半透明背景 */
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -37,7 +37,7 @@ section h2 {
 }
 
 a {
-    display: block;
+    display: block; /* 将链接分行显示 */
     font-size: 18px;
     color: #0066cc;
     text-decoration: none;
@@ -46,6 +46,26 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+.assignments-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.assignment {
+    flex: 1;
+    min-width: 300px; /* 控制每个项目的最小宽度 */
+    margin-bottom: 20px;
+}
+
+.assignment-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 footer {
@@ -59,3 +79,4 @@ footer p {
     font-size: 16px;
     margin: 5px 0;
 }
+
