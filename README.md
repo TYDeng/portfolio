@@ -7,7 +7,7 @@ This repo contains personal resumes in public folder and projects with link in p
 [Yatzy game](https://github.com/TYDeng/yatzy.git)
 (Read its READM.md for details)
 
-![a2p](https://github.com/user-attachments/assets/f743ee32-b238-4ccc-9e31-47e17ad06f37)
+![a2p](https://github.com/user-attachments/assets/b845f251-1780-4e54-9171-a43fac555801)
 
 
 
