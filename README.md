@@ -11,6 +11,6 @@ This repo contains personal resumes in public folder and projects with link in p
 [Yatzy game (PHP)](https://github.com/CZ2508444186/WenboYu_CSI3140_Yatzy_Game.git)
 (Read its READM.md for details)
 
-### Assignment 3
-
+### Assignment 4
+[Web application] (https://github.com/CZ2508444186/emergency_waitlist.git)
 (Read its READM.md for details)
