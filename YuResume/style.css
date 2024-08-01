@@ -1,18 +1,27 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
+    background-image: url('chinese-style-8197546.jpg'); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: #333;
 }
 
 .resume {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 50px auto;
     padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9); 
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     font-size: 36px;
     margin-bottom: 10px;
+    color: #444;
 }
 
 header p {
@@ -24,12 +33,26 @@ header p {
 section h2 {
     font-size: 24px;
     margin-bottom: 10px;
+    color: #444;
+}
+
+a {
+    display: block;
+    font-size: 18px;
+    color: #0066cc;
+    text-decoration: none;
+    margin: 5px 0;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 footer {
     margin-top: 50px;
     border-top: 1px solid #ccc;
     padding-top: 20px;
+    text-align: center;
 }
 
 footer p {
