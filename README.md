@@ -7,6 +7,9 @@ This repo contains personal resumes in public folder and projects with link in p
 [Yatzy game](https://github.com/TYDeng/yatzy.git)
 (Read its READM.md for details)
 
+![image](https://github.com/user-attachments/assets/dfb06d09-3a2c-4120-be53-928a2ad1aa4a)
+
+
 ### Assignment 3
 [Yatzy game (PHP)](https://github.com/CZ2508444186/WenboYu_CSI3140_Yatzy_Game.git)
 (Read its READM.md for details)
