@@ -14,3 +14,5 @@ This repo contains personal resumes in public folder and projects with link in p
 ### Assignment 4
 [Emergency_waitlist](https://github.com/CZ2508444186/emergency_waitlist.git)
 (Read its READM.md for details)
+![image](https://github.com/user-attachments/assets/b9300aea-f62f-4bda-9ff7-c1284f339386)
+
