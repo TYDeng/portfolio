@@ -9,11 +9,11 @@ This repo contains personal resumes in public folder and projects with link in p
 
 ![a2p](https://github.com/user-attachments/assets/b845f251-1780-4e54-9171-a43fac555801)
 
-
-
 ### Assignment 3
 [Yatzy game (PHP)](https://github.com/CZ2508444186/WenboYu_CSI3140_Yatzy_Game.git)
 (Read its READM.md for details)
+
+![a3p](https://github.com/user-attachments/assets/5546fee7-a5ad-40d5-abc3-6cafd4c7d53d)
 
 ### Assignment 4
 [Emergency_waitlist](https://github.com/CZ2508444186/emergency_waitlist.git)
